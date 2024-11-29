@@ -5,7 +5,8 @@ const Header = () => {
     const navLink = <>
         <li><Link to='/'>Home</Link></li>
         <li><Link to='/login'>Log In</Link></li>
-        <li><Link to='/register'>Refister</Link></li>
+        <li><Link to='/register'>Register</Link></li>
+        <li><Link to='/heroregister'>Hero Register</Link></li>
         
     </>
     return (

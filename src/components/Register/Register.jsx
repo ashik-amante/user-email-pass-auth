@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import React, { useState } from 'react';
 import auth from '../../firebase/firebase.config';
 import { FaRegEye } from "react-icons/fa";
@@ -14,6 +14,7 @@ const Register = () => {
 
     const handleSubmit = e => {
         e.preventDefault()
+        const name = e.target.name.value
         const email = e.target.email.value
         const password = e.target.password.value
         const accepted = e.target.terms.checked
@@ -42,6 +43,13 @@ const Register = () => {
             .then(userCredential => {
                 const user = userCredential.user
                 console.log(user);
+                setLogsuccess('User Created Successfully!!')
+                // update profile
+                updateProfile(user, {
+                    displayName: name,
+                    photoURL:"https://example.com/jane-q-user/profile.jpg"
+                })
+                .then(()=>console.log('Profile Updated!'))
 
                 // email verification 
                 sendEmailVerification(user)
@@ -62,6 +70,8 @@ const Register = () => {
             <form onSubmit={handleSubmit} className='flex justify-between mt-10 '>
 
                 <div className='space-y-4 mx-auto  w-full'>
+                    <input className='px-2 py-3 w-1/3 rounded-lg' type="text" name="name" placeholder='Your Name' id="" required /><br />
+
                     <input className='px-2 py-3 w-1/3 rounded-lg' type="email" name="email" placeholder='Email' id="" required /><br />
 
                     <div className='flex justify-center items-center relative'>

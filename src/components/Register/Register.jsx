@@ -1,8 +1,9 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import React, { useState } from 'react';
 import auth from '../../firebase/firebase.config';
 import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 
 const Register = () => {
     const [logerror, setLogerror] = useState('')
@@ -15,6 +16,8 @@ const Register = () => {
         e.preventDefault()
         const email = e.target.email.value
         const password = e.target.password.value
+        const accepted = e.target.terms.checked
+        console.log(email,password,accepted);
 
         // reset
         setLogerror('')
@@ -29,13 +32,23 @@ const Register = () => {
             setLogerror('tour pass should have at least one uppercase letter')
             return;
         }
+        else if(!accepted){
+            setLogerror('please accept our terms and co')
+            return
+        }
 
-
+       
         createUserWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
                 const user = userCredential.user
                 console.log(user);
-                setLogsuccess('User logged successfully !')
+
+                // email verification 
+                sendEmailVerification(user)
+                .then(()=>{
+                    alert('Please Vaerify your email')
+                })
+                // setLogsuccess('User Register successfully !')
             })
             .catch(error => {
                 console.log('error', error);
@@ -63,9 +76,14 @@ const Register = () => {
                         </p>
                     </div>
                     <br />
+                    <input type="checkbox" name="terms" id="terms" />
+                    <label className='ml-2' htmlFor="terms">Accept out terms and condition </label>
+                     <br />
 
                     <input className='px-2 py-3 w-1/3 rounded-lg btn btn-success' type="submit" value="Submit" />
+                    
                 </div>
+                
             </form>
             {
                 logerror && <p className='text-2xl text-red-600'>{logerror}</p>
@@ -73,7 +91,9 @@ const Register = () => {
             {
                 logsuccess && <p className='text-2xl text-green-600'>{logsuccess}</p>
             }
+            <p className='mt-6'>Already Have an account  !! <Link to='/login'><button className='bg-green-500 text-white px-3 py-2 rounded-lg ml-2'>Please Log In</button></Link> </p>
         </div>
+        
     );
 };
 
